@@ -1,0 +1,30 @@
+Daily Checklist
+
+We begin this project with identifying what should be included in the checklist and what the purpose of the checklist is. 
+
+---
+Claude Prompt for Health Bot
+
+I am building a smart medication tracking system using Google Apps Script that reads its instructions directly from a Google Sheet. 
+
+Please design a clean, highly scalable structure for my Google Sheet. I need two specific sheets (tabs):
+
+1. A "Settings" tab: This acts as the configuration dashboard. It needs columns for Medication Name, Scheduled Hours (comma-separated 24-hour format, e.g., "8, 20"), and Renewal Date. It must gracefully accept a text placeholder like "PENDING" or "None" for medications where the renewal date is currently unknown.
+2. A "Log" tab: This acts as the database where the script will automatically record history or look for compliance. It needs columns for Timestamp, Medication Name, and Status (e.g., "Taken").
+
+Please provide this structure in a clear Markdown table layout, explain how the columns interact with a script running on an hourly trigger, and give me 3 examples of rows filled out—including one medication that has a "PENDING" renewal date.
+
+---
+
+Resume Session With Gemini if Health Bot Malfunctions or Needs Editing
+
+Hey Gemini! I need to review or troubleshoot my "Health Bot Script" system. Here is the background on how we built it:
+
+1. System Setup: It is a Google Apps Script linked to my "Health Bot" Google Sheet. It uses two main sheets: "Settings" (for medication details, codes, hours, and remaining doses) and "Log" (for tracking history).
+2. Trigger 1 (sendBundledReminders): Runs hourly. It bundles medications into an "A.M. Schedule" (07:00) or "P.M. Schedule" (19:00) email based on the "Group" column, rather than sending individual emails. It includes an iPhone quick-reply cheat sheet (ti2, ti1, t, i2, ?).
+3. Trigger 2 (parseIncomingReplies): Runs every 5 minutes. It scans Gmail for unread "[HealthBot]" subjects, parses my short iPhone text/email replies, updates the "Log" tab, and automatically subtracts the dosage from the "Doses Remaining" column on the "Settings" tab.
+4. Safeguards: It includes an automated follow-up loop if I reply with "?" or don't reply, capped at a strict maximum of 3 reminder emails per missed dose per day.
+
+I need help with the following issue or modification: [INSERT YOUR QUESTION/PROBLEM HERE]
+
+----
