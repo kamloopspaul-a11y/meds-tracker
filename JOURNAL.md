@@ -129,3 +129,38 @@
 **Next:**
 - Confirm refill reminder spec → add Refills tab to Sheet + update Code.gs + add reminder cards to index.html
 - Consider notification times / push notifications (deferred from May 26 session — still open)
+
+---
+
+## 2026-06-05
+
+**Did:**
+- Redesigned UI: dropped marquee idea in favour of a static notice area above the toggles.
+- Renamed toggles: T Pills AM → Thyroid, Inspiolto AM/PM → A.M. Inhalers / P.M. Inhalers (each covers both Inspiolto + Pulmicort together).
+- Built notice system: amber ⚠️ Dr. Jones warning at ≤20 days, red 🚨 urgent at ≤7 days (non-renewable inhalers only); red 💊 Safeway call at ≤7 days (all meds); red ❗ overdue.
+- Replaced hardcoded refill dates with localStorage-backed refill tracking. Seed dates from config on first run; "Picked up ✓" button per med advances nextRefill by daysSupply. No code changes needed after deploy.
+- Added collapsible ▸ Refill Dates section with per-med status and pickup button.
+- Bumped to v2.1.
+- Created Google Sheet "Meds Tracker" (tab: Log) via Chrome.
+- Deployed Apps Script as Web App (Execute as Me / Anyone) and wired URL into index.html.
+- Generated placeholder icons (icon-192.png, icon-512.png) — green pill design.
+- Created GitHub repo kamloopspaul-a11y/meds-tracker, pushed all files, enabled GitHub Pages.
+- App live at: https://kamloopspaul-a11y.github.io/meds-tracker/
+- Paul added to iPhone Home Screen via Safari.
+
+**Decisions:**
+- No marquee — notices only, static and persistent.
+- Toggles reset at midnight device time (localStorage date comparison).
+- "Picked up ✓" should be tapped when starting a new supply, not at pharmacy pickup, to keep cycle dates accurate.
+- Manual pickup recording preferred over auto-advance.
+- Push notifications deferred — still open from May 26.
+
+**Open questions / deferred:**
+- Push notifications (PWA web push) — still queued from May 26 session.
+- Button label "Picked up ✓" may be changed to "Started new supply" — deferred, Paul will remember for now.
+- Air quality integration — still queued from May 22 session.
+
+**Next:**
+- Monitor app in daily use. Watch for Inspiolto Dr. Jones notice firing around June 8.
+- Tap "Picked up ✓" when starting new Inspiolto supply (due June 28).
+- Consider push notifications when ready to move to Phase 2.

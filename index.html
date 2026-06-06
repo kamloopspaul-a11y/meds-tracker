@@ -282,7 +282,7 @@
   </details>
 </div>
 
-<footer>Meds v2.1</footer>
+<footer>Meds v2.2</footer>
 
 <script>
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcLD26lSIIWg1mG7WfpZOS8kdAKGpOjBnaBOLFphM0vEDzP3S7dRXSDO4GpeJCRXGNhQ/exec';
@@ -303,7 +303,10 @@
   const MEDS = ['thyroid', 'am-inhalers', 'pm-inhalers'];
 
   // ── Helpers ───────────────────────────────────────────────────────────────────
-  function todayStr() { return new Date().toISOString().slice(0, 10); }
+  function todayStr() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
   function timeStr()  { return new Date().toLocaleTimeString('en-CA', { hour: '2-digit', minute: '2-digit' }); }
 
   function friendlyDate(d) {
