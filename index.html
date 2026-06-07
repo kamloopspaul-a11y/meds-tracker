@@ -138,7 +138,10 @@
     .refill-section summary {
       font-size: 1rem; font-weight: 600; color: var(--muted);
       cursor: pointer; padding: 8px 0; user-select: none;
+      list-style: none;
     }
+    .refill-section summary::-webkit-details-marker,
+    .refill-section summary::marker { display: none; }
     .refill-list {
       margin-top: 10px;
       display: flex;
@@ -161,27 +164,45 @@
     .refill-info .refill-due.soon  { color: #e67e22; font-weight: 600; }
     .refill-info .refill-due.urgent { color: var(--red); font-weight: 600; }
 
-    .pickup-btn {
+    .refill-btn {
       font-size: 0.8rem;
       font-weight: 600;
       padding: 7px 14px;
       border-radius: 8px;
-      border: 1px solid var(--accent);
-      background: var(--accent-bg);
-      color: var(--accent);
+      border: 1px solid transparent;
       cursor: pointer;
       white-space: nowrap;
       flex-shrink: 0;
       transition: background 0.15s;
     }
-    .pickup-btn:active { background: #d0e8d8; }
+    .refill-btn.state-filled {
+      border-color: var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      cursor: default;
+    }
+    .refill-btn.state-renew {
+      border-color: #f0a500;
+      background: #fff8e6;
+      color: #7a4f00;
+    }
+    .refill-btn.state-renew:active { background: #ffefc4; }
+    .refill-btn.state-ordered {
+      border-color: var(--accent);
+      background: var(--accent-bg);
+      color: var(--accent);
+    }
+    .refill-btn.state-ordered:active { background: #d0e8d8; }
 
     /* History */
     .history-section { margin: 24px 16px 0; }
     .history-section summary {
       font-size: 1rem; font-weight: 600; color: var(--muted);
       cursor: pointer; padding: 8px 0; user-select: none;
+      list-style: none;
     }
+    .history-section summary::-webkit-details-marker,
+    .history-section summary::marker { display: none; }
     .history-table {
       width: 100%; border-collapse: collapse;
       margin-top: 10px; font-size: 0.78rem;
@@ -282,7 +303,7 @@
   </details>
 </div>
 
-<footer>Meds v2.2</footer>
+<footer>Meds v2.4</footer>
 
 <script>
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcLD26lSIIWg1mG7WfpZOS8kdAKGpOjBnaBOLFphM0vEDzP3S7dRXSDO4GpeJCRXGNhQ/exec';
@@ -341,12 +362,39 @@
     localStorage.setItem('refillDates', JSON.stringify(dates));
   }
 
-  function recordPickup(id) {
-    const dates = loadRefillDates();
-    const med   = REFILLS.find(m => m.id === id);
+  // ── Refill status: Filled → Renew Meds → Ordered → Filled ────────────────────
+  const THRESH_RENEW = 20; // days before due that "Renew Meds" auto-activates
+
+  function loadRefillStatus() {
+    const stored = JSON.parse(localStorage.getItem('refillStatus') || '{}');
+    let seeded = false;
+    REFILLS.forEach(med => {
+      if (!stored[med.id]) { stored[med.id] = 'filled'; seeded = true; }
+    });
+    if (seeded) localStorage.setItem('refillStatus', JSON.stringify(stored));
+    return stored;
+  }
+
+  function saveRefillStatus(status) {
+    localStorage.setItem('refillStatus', JSON.stringify(status));
+  }
+
+  function advanceRefillStatus(id) {
+    const status = loadRefillStatus();
+    const dates  = loadRefillDates();
+    const med    = REFILLS.find(m => m.id === id);
     if (!med) return;
-    dates[id] = addDays(dates[id], med.daysSupply);
-    saveRefillDates(dates);
+
+    if (status[id] === 'renew') {
+      status[id] = 'ordered';
+    } else if (status[id] === 'ordered') {
+      status[id] = 'filled';
+      dates[id] = addDays(dates[id], med.daysSupply);
+      saveRefillDates(dates);
+    } else {
+      return; // 'filled' is dimmed/inert — only the date threshold advances it
+    }
+    saveRefillStatus(status);
     renderRefillList();
     renderNotices();
   }
@@ -388,9 +436,26 @@
   }
 
   // ── Refill list ───────────────────────────────────────────────────────────────
+  const REFILL_STATUS_LABELS = {
+    filled:  { text: 'Filled',     cls: 'state-filled'  },
+    renew:   { text: 'Renew Meds', cls: 'state-renew'   },
+    ordered: { text: 'Ordered',    cls: 'state-ordered' }
+  };
+
   function renderRefillList() {
-    const list  = document.getElementById('refillList');
-    const dates = loadRefillDates();
+    const list   = document.getElementById('refillList');
+    const dates  = loadRefillDates();
+    const status = loadRefillStatus();
+
+    // Auto-advance Filled → Renew Meds once within the renewal window
+    let changed = false;
+    REFILLS.forEach(med => {
+      if (status[med.id] === 'filled' && daysUntil(dates[med.id]) <= THRESH_RENEW) {
+        status[med.id] = 'renew';
+        changed = true;
+      }
+    });
+    if (changed) saveRefillStatus(status);
 
     list.innerHTML = REFILLS.map(med => {
       const days     = daysUntil(dates[med.id]);
@@ -401,13 +466,15 @@
       else if (days <= THRESH_RX_RED)   { dueClass = 'urgent'; dueLabel = `Due in ${days} day${days===1?'':'s'} — ${friendly}`; }
       else if (days <= THRESH_RX_AMBER) { dueClass = 'soon';   dueLabel = `Due in ${days} days — ${friendly}`; }
 
+      const st = REFILL_STATUS_LABELS[status[med.id]] || REFILL_STATUS_LABELS.filled;
+
       return `
         <div class="refill-row">
           <div class="refill-info">
             <div class="refill-name">${med.name}</div>
             <div class="refill-due ${dueClass}">${dueLabel}</div>
           </div>
-          <button class="pickup-btn" onclick="recordPickup('${med.id}')">Picked up ✓</button>
+          <button class="refill-btn ${st.cls}" onclick="advanceRefillStatus('${med.id}')">${st.text}</button>
         </div>`;
     }).join('');
   }

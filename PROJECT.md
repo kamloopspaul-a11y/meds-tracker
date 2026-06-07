@@ -9,7 +9,7 @@ A Progressive Web App for tracking daily medications and prescription renewal da
 **Apps Script URL:** https://script.google.com/macros/s/AKfycbxcLD26lSIIWg1mG7WfpZOS8kdAKGpOjBnaBOLFphM0vEDzP3S7dRXSDO4GpeJCRXGNhQ/exec
 
 ## Current Version
-v2.2 — deployed June 6, 2026
+v2.4 — deployed June 7, 2026
 
 ## Stack
 - `index.html` — single-file PWA (HTML + CSS + JS)
@@ -25,7 +25,7 @@ v2.2 — deployed June 6, 2026
 [ Thyroid ]         ← once daily, morning — Methimazole + Propranolol
 [ A.M. Inhalers ]   ← morning — Inspiolto + Pulmicort
 [ P.M. Inhalers ]   ← evening — Inspiolto + Pulmicort
-[ ▸ Refill Dates ]  ← collapsible, Picked up ✓ button per med
+[ ▸ Refill Dates ]  ← collapsible, status button cycles per med
 [ ▸ History ]       ← last 14 days, loaded on demand from Sheets
 ```
 
@@ -42,7 +42,12 @@ v2.2 — deployed June 6, 2026
 | Inspiolto Respimat | 30 | 2026-06-28 | No |
 | Pulmicort Turbuhaler | 100 | 2026-07-28 | No |
 
-**Important:** Tap "Picked up ✓" when you START the new supply, not at pharmacy pickup. This keeps the cycle dates accurate.
+**Refill status button (per med, cycles automatically + manually):**
+- **Filled** (dimmed, default) — quiet, no action needed.
+- **Renew Meds** (amber) — auto-activates ~20 days before due; tap once you've called the pharmacist/Dr.
+- **Ordered** (green) — pending pickup; tap once the new supply is in hand. This advances the refill date by daysSupply and resets the med back to Filled.
+
+**Important:** The final tap (Ordered → Filled) should happen when you START the new supply, not at pharmacy pickup. This keeps the cycle dates accurate.
 
 ## Medications
 - **Thyroid:** Methimazole + Propranolol — once daily, morning
@@ -54,7 +59,7 @@ v2.2 — deployed June 6, 2026
 ## Locked Decisions
 - No marquee — static notice cards only
 - Toggles lock on tap, reset at midnight (device clock, Pacific time)
-- Manual pickup recording (no auto-advance)
+- Refill status is a 3-stage cycle: Filled → Renew Meds (auto, ~20 days out) → Ordered → Filled (manual, advances date)
 - localStorage is source of truth for daily state; Sheets is permanent log
 - Day-rollover uses device LOCAL date (not UTC) — anchors midnight reset to Pacific time and follows DST automatically
 - Dose logging: instant POST to Apps Script on each toggle tap
