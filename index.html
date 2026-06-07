@@ -460,7 +460,7 @@
 
   // ── Apps Script POST ──────────────────────────────────────────────────────────
   function postToSheets(med, time, date) {
-    if (!SCRIPT_URL || SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbxcLD26lSIIWg1mG7WfpZOS8kdAKGpOjBnaBOLFphM0vEDzP3S7dRXSDO4GpeJCRXGNhQ/exec') return;
+    if (!SCRIPT_URL) return;
     const labels = { thyroid: 'Thyroid', 'am-inhalers': 'AM Inhalers', 'pm-inhalers': 'PM Inhalers' };
     fetch(SCRIPT_URL, {
       method: 'POST',
@@ -476,7 +476,7 @@
 
   function loadHistory() {
     const el = document.getElementById('historyContent');
-    if (!SCRIPT_URL || SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbxcLD26lSIIWg1mG7WfpZOS8kdAKGpOjBnaBOLFphM0vEDzP3S7dRXSDO4GpeJCRXGNhQ/exec') {
+    if (!SCRIPT_URL) {
       el.innerHTML = '<div class="history-error">Apps Script URL not set.</div>'; return;
     }
     el.innerHTML = '<div class="history-loading">Loading…</div>';

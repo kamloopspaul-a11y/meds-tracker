@@ -9,7 +9,7 @@ A Progressive Web App for tracking daily medications and prescription renewal da
 **Apps Script URL:** https://script.google.com/macros/s/AKfycbxcLD26lSIIWg1mG7WfpZOS8kdAKGpOjBnaBOLFphM0vEDzP3S7dRXSDO4GpeJCRXGNhQ/exec
 
 ## Current Version
-v2.1 — deployed June 5, 2026
+v2.2 — deployed June 6, 2026
 
 ## Stack
 - `index.html` — single-file PWA (HTML + CSS + JS)
@@ -56,6 +56,7 @@ v2.1 — deployed June 5, 2026
 - Toggles lock on tap, reset at midnight (device clock, Pacific time)
 - Manual pickup recording (no auto-advance)
 - localStorage is source of truth for daily state; Sheets is permanent log
+- Day-rollover uses device LOCAL date (not UTC) — anchors midnight reset to Pacific time and follows DST automatically
 - Dose logging: instant POST to Apps Script on each toggle tap
 - History: lazy-loaded from Sheets when section is opened
 

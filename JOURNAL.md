@@ -4,6 +4,27 @@
 
 ---
 
+## 2026-06-06
+
+**Did:**
+- Diagnosed and fixed a day-rollover bug: `todayStr()` was using `toISOString()` (UTC date) instead of the device's local date. Pacific is UTC-7, so the day boundary was rolling over around 5pm local instead of midnight — causing the toggle/lock state to reset or stick at the wrong times. Symptom Paul hit: app showed the correct current date but toggles were already locked as "taken" this morning (leftover state from the previous evening, carried over because the UTC-derived date string happened to coincide with today's local date).
+- Replaced `todayStr()` with a version built from `getFullYear()/getMonth()/getDate()` — uses the phone's local wall-clock date, follows PST/PDT (DST) automatically, no hardcoded time zone needed.
+- As a side effect, this also fixes a latent inconsistency in `daysUntil()`, which was comparing a UTC-derived date string against a locally-parsed `Date` object.
+- Bumped service worker cache name `meds-v1` → `meds-v2` in `sw.js` so the cache-first SW picks up the corrected `index.html` instead of continuing to serve the stale cached version.
+- Bumped app version to v2.2 (footer + PROJECT.md).
+- Added a Locked Decision: day-rollover anchors to device LOCAL date, not UTC.
+- Paul pushed to GitHub; Pages redeploy in progress.
+
+**Decisions:**
+- Use device local date for day-rollover (not a hardcoded "PST") — simpler, follows DST automatically, and correctly reflects wherever Paul actually is.
+- Did not wipe localStorage — Paul will let tonight's local-midnight rollover clear today's stuck lock naturally.
+
+**Next:**
+- Confirm tomorrow morning that toggles reset correctly at local midnight and v2.2 is live (check footer).
+- Continue monitoring the Inspiolto Dr. Jones notice (expected ~June 8) and refill cycle (Inspiolto pickup due June 28).
+
+---
+
 ## 2026-05-20
 
 **Did:**
