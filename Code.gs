@@ -6,6 +6,13 @@
 
 var SHEET_NAME = 'Log';
 
+// Cross-realm-safe Date check. `instanceof Date` can return false for Date
+// values returned by Range.getValues() because they originate from a
+// different JS execution context. Duck-type instead.
+function isDateLike(v) {
+  return v && typeof v === 'object' && typeof v.getTime === 'function' && !isNaN(v.getTime());
+}
+
 function getSheet() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sh = ss.getSheetByName(SHEET_NAME);
@@ -53,10 +60,10 @@ function doGet(e) {
       // strings so filtering/sorting/display all stay consistent.
       var rawDate = row[0];
       var rawTime = row[1];
-      var date = (rawDate instanceof Date)
+      var date = isDateLike(rawDate)
         ? Utilities.formatDate(rawDate, tz, 'yyyy-MM-dd')
         : (rawDate ? String(rawDate).trim() : '');
-      var time = (rawTime instanceof Date)
+      var time = isDateLike(rawTime)
         ? Utilities.formatDate(rawTime, tz, 'HH:mm')
         : (rawTime ? String(rawTime).trim() : '');
       var med = row[2] ? String(row[2]).trim() : '';
