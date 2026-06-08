@@ -303,7 +303,7 @@
   </details>
 </div>
 
-<footer>Meds v2.4</footer>
+<footer>Meds v2.5</footer>
 
 <script>
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcLD26lSIIWg1mG7WfpZOS8kdAKGpOjBnaBOLFphM0vEDzP3S7dRXSDO4GpeJCRXGNhQ/exec';
@@ -529,9 +529,16 @@
   function postToSheets(med, time, date) {
     if (!SCRIPT_URL) return;
     const labels = { thyroid: 'Thyroid', 'am-inhalers': 'AM Inhalers', 'pm-inhalers': 'PM Inhalers' };
+    // Note: Content-Type is deliberately 'text/plain' (not 'application/json').
+    // Apps Script web apps don't handle CORS preflight (OPTIONS) requests, so a
+    // POST with an 'application/json' header triggers a preflight that fails —
+    // the browser blocks the real request with "Failed to fetch" and nothing
+    // is ever logged. 'text/plain' is a CORS-"simple" content type, so no
+    // preflight is sent; Apps Script's e.postData.contents is still the raw
+    // JSON string and JSON.parse() in doPost works exactly the same.
     fetch(SCRIPT_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify({ date, time, med: labels[med] })
     }).catch(() => {});
   }

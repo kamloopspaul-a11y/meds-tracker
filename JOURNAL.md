@@ -185,3 +185,49 @@
 - Monitor app in daily use. Watch for Inspiolto Dr. Jones notice firing around June 8.
 - Tap "Picked up ✓" when starting new Inspiolto supply (due June 28).
 - Consider push notifications when ready to move to Phase 2.
+
+---
+
+## 2026-06-07
+
+**Did:**
+- Fixed a copy-paste bug in `index.html`: the `SCRIPT_URL` placeholder check was comparing the URL to itself, always true — this caused "Apps Script URL not set" on History AND silently blocked `postToSheets()` from logging any dose taps since deploy.
+- Increased font size of "▸ Refill Dates" / "▸ History" summary links + icons from 0.85rem to 1rem (~12pt).
+- Removed the duplicate disclosure-triangle icon on those two links (native `<summary>` marker was showing alongside the typed ▸).
+- Redesigned the refill workflow: replaced the single "Picked up ✓" button (which read like a status, not an action) with a 3-stage cyclic status button — **Filled** (dimmed/default) → **Renew Meds** (amber, auto-activates ~20 days before due) → **Ordered** (green, pending pickup) → tap to confirm pickup, which advances the date and resets to Filled. Same button footprint throughout — fixed layout preserved. Applies uniformly to all 3 meds (Thyroid included, anticipating future Dr. involvement in renewal).
+- Bumped version: v2.2 → v2.3 → v2.4, each pushed and deployed via GitHub Pages.
+
+**Verification:**
+- Paul tested live app: locks function correctly, History link no longer errors (pending first entries — Sheet was empty since no doses had logged due to the bug).
+- Note: dose taps prior to the fix (including the morning of June 7) were not recorded in the Sheet's Log tab — this is expected and not a data-loss concern, just nothing was ever sent.
+
+**Status:** App stable at v2.4. No open issues.
+
+**Next:**
+- Watch for first History entries to populate as new dose taps log correctly.
+- Tap "Renew Meds" / "Ordered" through the new refill cycle as real renewal dates approach (Inspiolto due June 28).
+- Push notifications (Phase 2) and other deferred items remain queued.
+
+---
+
+## 2026-06-08
+
+**Issue reported:** Paul noticed the Sheet's Log tab still had nothing recorded, despite the v2.4 SCRIPT_URL fix on June 7.
+
+**Diagnosis (used Chrome to call the live Apps Script directly from the page context):**
+- GET `?action=history` worked fine (200 OK).
+- POST with `Content-Type: application/json` failed every time with `TypeError: Failed to fetch` — silently swallowed by `.catch(() => {})` in `postToSheets()`.
+- Root cause: a JSON-typed POST is a CORS "non-simple" request, so the browser sends an OPTIONS preflight first. Apps Script web apps don't respond to OPTIONS, so the preflight fails and the browser never sends the real POST. This was the actual reason nothing was ever logged — separate from (and masked by) the June 7 SCRIPT_URL bug.
+- Secondary issue found while testing: Google Sheets auto-converts `"2026-06-08"` / `"09:15"` style strings into real Date/Time values on write (via `appendRow`/`setValue`, regardless of column number-format), which would have corrupted the History view's date filter and display once logging started working.
+
+**Fixes (v2.5):**
+- `index.html` — changed `postToSheets()`'s `Content-Type` from `application/json` to `text/plain;charset=utf-8`. This is a CORS "simple" content type so no preflight is sent; `e.postData.contents` server-side is unaffected (still the raw JSON string, `JSON.parse()` works the same).
+- `Code.gs` — `doGet()` now normalizes any Date-typed cells back to `yyyy-MM-dd` / `HH:mm` strings via `Utilities.formatDate()` before filtering/sorting, so History stays correct regardless of how Sheets stored the value.
+- `sw.js` — bumped cache name `meds-v2` → `meds-v2-5` to bust the old cached `index.html` on Paul's phone.
+- Cleaned up the Sheet: removed test rows written during diagnosis, added the missing `Date | Time | Med` header row (the sheet had been created via the Chrome UI without one — `getSheet()` only adds it when creating a brand-new sheet), and set columns A:B to Plain Text format.
+
+**Action needed from Paul:**
+- Open the Apps Script project (Extensions → Apps Script from the Sheet, or the project URL), paste in the updated `Code.gs`, and redeploy (Deploy → Manage deployments → Edit → New version) so the History normalization takes effect. The dose-logging fix itself (in `index.html`) needs no Apps Script redeploy — it'll work as soon as GitHub Pages serves the new file and the service worker updates.
+- After GitHub Pages updates, fully close and reopen the PWA on the iPhone (or wait for the new service worker to activate) so the new `index.html`/`sw.js` load.
+
+**Status:** v2.5 pushed. Watching for first real History entries to confirm end-to-end.

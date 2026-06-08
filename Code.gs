@@ -43,11 +43,23 @@ function doGet(e) {
     cutoff.setDate(cutoff.getDate() - days);
     cutoff.setHours(0, 0, 0, 0);
 
+    var tz = Session.getScriptTimeZone();
+
     for (var i = 1; i < data.length; i++) { // skip header
-      var row  = data[i];
-      var date = row[0] ? String(row[0]).trim() : '';
-      var time = row[1] ? String(row[1]).trim() : '';
-      var med  = row[2] ? String(row[2]).trim() : '';
+      var row = data[i];
+
+      // Sheets sometimes auto-converts "yyyy-MM-dd" / "HH:mm" strings into
+      // real Date values on write. Normalize either case back to plain
+      // strings so filtering/sorting/display all stay consistent.
+      var rawDate = row[0];
+      var rawTime = row[1];
+      var date = (rawDate instanceof Date)
+        ? Utilities.formatDate(rawDate, tz, 'yyyy-MM-dd')
+        : (rawDate ? String(rawDate).trim() : '');
+      var time = (rawTime instanceof Date)
+        ? Utilities.formatDate(rawTime, tz, 'HH:mm')
+        : (rawTime ? String(rawTime).trim() : '');
+      var med = row[2] ? String(row[2]).trim() : '';
 
       if (!date) continue;
 
