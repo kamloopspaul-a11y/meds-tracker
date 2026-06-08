@@ -554,7 +554,7 @@
       el.innerHTML = '<div class="history-error">Apps Script URL not set.</div>'; return;
     }
     el.innerHTML = '<div class="history-loading">Loading…</div>';
-    fetch(SCRIPT_URL + '?action=history&days=14')
+    fetch(SCRIPT_URL + '?action=history&days=14&_=' + Date.now(), { cache: 'no-store' })
       .then(r => r.json())
       .then(data => renderHistory(data, el))
       .catch(() => { el.innerHTML = '<div class="history-error">Could not load history.</div>'; });
