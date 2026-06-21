@@ -1,0 +1,4 @@
+# Personal/health documents — never commit these
+Private/
+Personal Notes.md
+.DS_Store
