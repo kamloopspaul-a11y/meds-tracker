@@ -67,6 +67,7 @@ Refill tracking is no longer a separate hardcoded list — it lives on individua
 - Day-rollover uses device LOCAL date (not UTC) — anchors midnight reset to Pacific time and follows DST automatically
 - Dose logging: instant POST to Apps Script on each toggle tap
 - History: lazy-loaded from Sheets when section is opened
+- DOB is never hardcoded as a real value in public source (seed default is blank), never included in the Sheets backup payload — it exists only in each device's own localStorage, set manually via "Edit Patient Info"
 
 ## Red Circle Meds — Backup / Restore to Sheets (manual, secret-protected)
 Added because `medList`/`patientInfo` live only in phone localStorage (see below) with no redundancy — a lost/wiped/crashed phone would lose the whole list permanently. Paul wants privacy first, so this is manual-only (no auto-sync, no timer) and explicitly excludes date of birth.
@@ -96,6 +97,11 @@ A collapsible section (below History) listing every prescription, supplement, an
 - Inspiolto (non-renewable): Dr. Jones amber ≤20 days, red ≤7 days; Safeway ≤7 days
 - Pulmicort (non-renewable): Dr. Jones amber ≤20 days, red ≤7 days; Safeway ≤7 days
 
+## Known Issues
+None currently open.
+
+**Repo history note (2026-07-04):** All commit hashes changed on this date — Paul's real DOB had been accidentally hardcoded as a public-source seed default (see JOURNAL.md), so the full git history was rewritten with `git-filter-repo` to scrub it and force-pushed. If a future session needs to reference an "old" commit hash from before 2026-07-04, it no longer exists; only the rewritten hashes are valid. See `Studio/ISSUES.md` for the git-lock EPERM workaround used repeatedly during this session (the `os.rename()` trick).
+
 ## GitHub Push Workflow
 ```bash
 cd ~/Documents/Studio/Projects/Health
@@ -103,3 +109,4 @@ git add .
 git commit -m "message"
 git push
 ```
+If you hit `EPERM: operation not permitted` on `.git/index.lock` or similar (a known iCloud-sync issue, see `Studio/ISSUES.md`), try renaming the lock file out of the way via Python (`os.rename`) before retrying — this has worked repeatedly when plain `rm`/`mv` failed with the same error.

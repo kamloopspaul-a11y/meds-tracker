@@ -348,3 +348,19 @@ Same PAT used for Golf also covers this repo — Resource owner: personal accoun
 **Lesson:** the original Red Circle Meds build (this same day, before Paul's privacy concerns were raised) seeded real patient data — including DOB — directly into public source as "realistic" defaults. Going forward, any seed/default data for a public repo should be placeholder-only; real personal data belongs only in runtime storage (localStorage) or a private backing store, never committed.
 
 ---
+
+## 2026-07-04 — Session close
+
+Paul confirmed the Backup to Sheets test succeeded and DOB is showing correctly (phone-local, expected). Closing out this session's work on Health.
+
+**Final state:** v3.2, live and confirmed working by Paul. Red Circle Meds is fully editable in-app (add/edit/delete, patient info edit), refill/renewal tracking is unified into the medication list itself (any item can opt in), and Backup/Restore to Sheets is tested end-to-end. The DOB exposure found mid-session (hardcoded in public source since earlier the same day) is fixed and scrubbed from git history.
+
+**Everything updated this close:**
+- `JOURNAL.md` (this file) — all of today's sessions logged in full above, each dated.
+- `PROJECT.md` — current version (v3.2), layout, refill config, Red Circle Meds design + backup/restore section, Known Issues (none open), and a note on the 2026-07-04 git history rewrite.
+- `index.html` — line 2 changelog-pointer comment confirmed present; footer version matches PROJECT.md.
+- `Studio/TODO_LIST.md` — Health resume cue updated from stale v2.2/June 6 to current v3.2/July 4 with a full session summary.
+
+**No open items.** Next session can pick up cold from PROJECT.md + this entry.
+
+---
