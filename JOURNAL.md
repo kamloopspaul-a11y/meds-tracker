@@ -318,3 +318,17 @@ Same PAT used for Golf also covers this repo — Resource owner: personal accoun
 - Add the new `WEBHOOK_SECRET` rotation cue to `Studio/TODO_LIST.md` (mirrors the existing SmartCart `WEBHOOK_SECRET` entry — same public-repo rationale).
 
 ---
+
+## 2026-07-04 (cont'd) — Backup/Restore verified live, DOB display bug fixed
+
+**Did:**
+- Paul redeployed Code.gs, added the `WEBHOOK_SECRET` Script Property (first attempt failed with "unauthorized" because the property hadn't been added yet — not a code bug), then confirmed "Backed up ✓" on the first real Backup to Sheets. End-to-end flow now verified live: v3.0 loaded, Apps Script redeployed, MedList tab created, backup succeeded.
+- Paul flagged that DOB was displaying as month/day only (e.g. "Nov 6"), no year. Root cause: the patient block reused `friendlyDate()`, which is formatted for near-term refill dates (`weekday, month, day` — year is redundant when a date is always within the next few months). Applied to a birthdate decades in the past, that formatting silently drops the one field that matters most.
+- Added a separate `formatDOB()` helper (`month, day, year`, no weekday) and pointed the patient block at it instead. `friendlyDate()` itself is untouched — still used correctly for refill dates and History.
+- Bumped v3.0 → v3.1, sw.js cache meds-v3-0 → meds-v3-1.
+
+**Status:** Backup/Restore to Sheets fully working. DOB display bug fixed, pending push + Paul's phone reload to confirm the year now shows.
+
+**Next:** Push this fix; no Apps Script changes involved this time, so no redeploy needed — just the usual GitHub Pages update.
+
+---

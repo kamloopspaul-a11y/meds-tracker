@@ -452,7 +452,7 @@
   <div class="modal-box" id="modalBox"></div>
 </div>
 
-<footer>Meds v3.0</footer>
+<footer>Meds v3.1</footer>
 
 <script>
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyJnG-4pevm-343Cw9Vi-lIgNwtnDrcPEG2Icl0HFG5QSAB0DTC2ooZKmCEUdlmuEp4Bw/exec';
@@ -558,7 +558,7 @@
           <div class="patient-name">${esc(patient.name)}</div>
           ${editable ? `<button class="row-edit-btn" onclick="openPatientModal()">✏️ Edit</button>` : ''}
         </div>
-        <div class="patient-row"><strong>DOB:</strong> ${friendlyDate(patient.dob)}</div>
+        <div class="patient-row"><strong>DOB:</strong> ${formatDOB(patient.dob)}</div>
         <div class="patient-row"><strong>Conditions:</strong> ${esc(patient.conditions.join(', '))}</div>
         <div class="patient-row"><strong>Allergies:</strong> ${esc(patient.allergies)}</div>
         <div class="patient-row muted">List as of ${friendlyDate(todayStr())}</div>
@@ -755,6 +755,14 @@
 
   function friendlyDate(d) {
     return new Date(d + 'T12:00:00').toLocaleDateString('en-CA', { weekday: 'short', month: 'short', day: 'numeric' });
+  }
+
+  // Separate from friendlyDate() on purpose: DOB needs the year and has no
+  // use for a weekday, unlike refill dates (which are near-term and never
+  // ambiguous about year).
+  function formatDOB(d) {
+    if (!d) return '—';
+    return new Date(d + 'T12:00:00').toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' });
   }
 
   function daysUntil(dateStr) {

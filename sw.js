@@ -1,4 +1,4 @@
-const CACHE = 'meds-v3-0';
+const CACHE = 'meds-v3-1';
 const ASSETS = ['/', '/index.html', '/manifest.json'];
 
 self.addEventListener('install', e => {
