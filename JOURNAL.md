@@ -296,3 +296,5 @@ Same PAT used for Golf also covers this repo — Resource owner: personal accoun
 **Addendum:** Bumped `sw.js` cache name `meds-v2-6` → `meds-v2-9` to match, so the iPhone's service worker picks up the new `index.html` instead of serving a stale cached copy.
 
 ---
+**Pushed 2026-07-04:** Committed (`5cc2850`) and pushed to `origin/main` — hit the known `.git/index.lock` EPERM bug again (see `Studio/ISSUES.md`), resolved this time via `python3 -c "os.rename(...)"` to move the lock out of the way (plain `rm`/`mv`/`os.remove` all failed as usual). Commit and push both succeeded cleanly after that. GitHub Pages should now be serving v2.9 — not yet visually re-verified on iPhone.
+
