@@ -452,10 +452,18 @@
   <div class="modal-box" id="modalBox"></div>
 </div>
 
-<footer>Meds v2.9</footer>
+<footer>Meds v3.0</footer>
 
 <script>
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyJnG-4pevm-343Cw9Vi-lIgNwtnDrcPEG2Icl0HFG5QSAB0DTC2ooZKmCEUdlmuEp4Bw/exec';
+
+  // Shared secret checked by the Apps Script before it will read/write the
+  // MedList backup tab. This repo is public, so this constant is technically
+  // visible to anyone who views source — it raises the bar against casual
+  // abuse, it is not a substitute for keeping the Sheet itself private.
+  // Rotate periodically (see Studio/TODO_LIST.md) — update here AND in the
+  // Apps Script's Script Properties (WEBHOOK_SECRET) together.
+  const WEBHOOK_SECRET = 'bd47e60a2ea46a97c93189827c40b5e9';
 
   const THRESH_RX_AMBER = 20;
   const THRESH_RX_RED   = 7;
@@ -582,7 +590,10 @@
     let bodyHtml = `<div class="medlist-toolbar">
       <button class="print-btn" onclick="window.print()">🖨️ Print / Share</button>
       <button class="edit-toggle-btn" onclick="toggleMedListEdit()">${medListEditMode ? '✓ Done Editing' : '✏️ Edit List'}</button>
-    </div>`;
+      <button class="edit-toggle-btn" onclick="backupToSheets()">🗄️ Backup to Sheets</button>
+      <button class="edit-toggle-btn" onclick="restoreFromSheets()">⬇️ Restore from Sheets</button>
+    </div>
+    <div class="medlist-footnote" style="margin-top:0; margin-bottom:14px;">Backups are manual — tap "Backup to Sheets" after making changes. Date of birth is never sent; re-enter it after a restore if needed.</div>`;
     bodyHtml += buildPatientBlockHTML(patient, medListEditMode);
     if (medListEditMode) bodyHtml += `<button class="add-item-btn" onclick="openItemModal(null)">+ Add Item</button>`;
     bodyHtml += buildTablesHTML(list, medListEditMode);
@@ -930,8 +941,54 @@
     fetch(SCRIPT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ date, time, med: labels[med] })
+      body: JSON.stringify({ action: 'logDose', date, time, med: labels[med] })
     }).catch(() => {});
+  }
+
+  // ── Red Circle Meds: manual backup / restore to Sheets ────────────────────────
+  // Manual only — no auto-sync, no timer. Date of birth is deliberately
+  // stripped before it ever leaves the phone; re-enter it manually after a
+  // restore since it's never part of the backup payload.
+  function backupToSheets() {
+    if (!SCRIPT_URL) { alert('Apps Script URL not set.'); return; }
+    const patient = loadPatient();
+    const { dob, ...patientNoDob } = patient;
+    const payload = {
+      action: 'backupMedList',
+      secret: WEBHOOK_SECRET,
+      patient: patientNoDob,
+      medList: loadMedList()
+    };
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    })
+      .then(r => r.json())
+      .then(res => {
+        if (res.ok) alert('Backed up ✓');
+        else alert('Backup failed: ' + (res.error || 'unknown error'));
+      })
+      .catch(() => alert('Backup failed — could not reach the server.'));
+  }
+
+  function restoreFromSheets() {
+    if (!SCRIPT_URL) { alert('Apps Script URL not set.'); return; }
+    if (!confirm('This will replace your current medication list with the last backup from Sheets. Continue?')) return;
+
+    fetch(SCRIPT_URL + '?action=restoreMedList&secret=' + encodeURIComponent(WEBHOOK_SECRET) + '&_=' + Date.now(), { cache: 'no-store' })
+      .then(r => r.json())
+      .then(res => {
+        if (!res.ok) { alert('Restore failed: ' + (res.error || 'unknown error')); return; }
+        const current = loadPatient();
+        // DOB never leaves the phone, so it's never in the backup — keep whatever is already set locally.
+        savePatient({ ...res.patient, dob: current.dob || '' });
+        saveMedList(res.medList || []);
+        renderMedList();
+        renderNotices();
+        alert('Restored from backup taken ' + res.timestamp + '.\nIf DOB is blank, re-enter it via "Edit Patient Info."');
+      })
+      .catch(() => alert('Restore failed — could not reach the server.'));
   }
 
   // ── History ───────────────────────────────────────────────────────────────────

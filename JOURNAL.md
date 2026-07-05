@@ -298,3 +298,23 @@ Same PAT used for Golf also covers this repo — Resource owner: personal accoun
 ---
 **Pushed 2026-07-04:** Committed (`5cc2850`) and pushed to `origin/main` — hit the known `.git/index.lock` EPERM bug again (see `Studio/ISSUES.md`), resolved this time via `python3 -c "os.rename(...)"` to move the lock out of the way (plain `rm`/`mv`/`os.remove` all failed as usual). Commit and push both succeeded cleanly after that. GitHub Pages should now be serving v2.9 — not yet visually re-verified on iPhone.
 
+
+## 2026-07-04 (cont'd) — Manual, privacy-conscious backup/restore to Sheets
+
+**Context:** Paul's core concern was privacy + not losing the Red Circle Meds data (currently phone-`localStorage`-only) to a lost/wiped/crashed phone. He explicitly does NOT want live/automatic sync, and does NOT want his date of birth ever published to the Sheet — he already carries physical ID for that in an emergency, and considers Google/GitHub 2FA sufficient for the rest. He was fine reusing the existing meds-tracker Apps Script + Sheet, but ruled out reusing the GitHub PAT for this after I flagged that embedding a repo-write-scoped token in public client-side JS would be a much bigger exposure (arbitrary code/content pushes to `golf-scores` + `meds-tracker`) than the existing Apps-Script-URL exposure.
+
+**Did:**
+- `Code.gs`: added a `WEBHOOK_SECRET` check (via `PropertiesService` Script Properties) guarding two new actions — `backupMedList` (POST) and `restoreMedList` (GET) — both operating on a new `MedList` tab (`Timestamp | Data` columns, JSON blob per row, history kept not overwritten). The original dose-log POST (now explicit `action: 'logDose'`, still the default/fallback branch) and `history` GET remain unauthenticated, unchanged — lower-sensitivity data, no need to add friction there.
+- `index.html`: added `WEBHOOK_SECRET` constant (generated via `openssl rand -hex 16`), plus "🗄️ Backup to Sheets" / "⬇️ Restore from Sheets" buttons in the Red Circle Meds toolbar. `backupToSheets()` strips `dob` out of the patient object before it's ever serialized — it never leaves the phone. `restoreFromSheets()` confirms before overwriting, and preserves whatever DOB is already set locally (since the backup payload never contains one) rather than blanking it.
+- Bumped `index.html` footer v2.9 → v3.0 and `sw.js` cache `meds-v2-9` → `meds-v3-0`.
+- Updated `PROJECT.md` with a new "Backup / Restore to Sheets" section documenting the design, security posture (public repo → secret is a speed bump, not real secrecy), and the one-time Apps Script setup step.
+
+**Manual step required (Paul, not yet done):** Open the Meds Tracker Sheet → Extensions → Apps Script → paste in the updated `Code.gs` → Project Settings → Script Properties → add `WEBHOOK_SECRET` = `bd47e60a2ea46a97c93189827c40b5e9` (matches the constant now in `index.html`) → Deploy → Manage deployments → Edit → New version. Until this is done, tapping "Backup to Sheets" / "Restore from Sheets" will fail (old deployed script doesn't know these actions yet); the existing dose-toggle logging and History are unaffected either way.
+
+**Status:** Code pushed pending Apps Script redeploy by Paul. Not yet tested end-to-end (backup → confirm row in Sheet → restore on a clean state).
+
+**Next:**
+- After Paul redeploys: test a full round-trip — edit the list, Backup to Sheets, confirm the new `MedList` row, then simulate a wipe (clear the two localStorage keys via a private/incognito load or `localStorage.clear()` in Safari's dev console) and confirm Restore brings everything back except DOB.
+- Add the new `WEBHOOK_SECRET` rotation cue to `Studio/TODO_LIST.md` (mirrors the existing SmartCart `WEBHOOK_SECRET` entry — same public-repo rationale).
+
+---

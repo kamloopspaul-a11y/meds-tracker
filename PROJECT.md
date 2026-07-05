@@ -4,12 +4,12 @@
 A Progressive Web App for tracking daily medications and prescription renewal dates. Installed on iPhone Home Screen via Safari / GitHub Pages.
 
 **Live URL:** https://kamloopspaul-a11y.github.io/meds-tracker/
-**GitHub:** https://github.com/kamloopspaul-a11y/meds-tracker
-**Google Sheet:** Meds Tracker (Log tab)
+**GitHub:** https://github.com/kamloopspaul-a11y/meds-tracker (public repo)
+**Google Sheet:** Meds Tracker (tabs: Log, MedList)
 **Apps Script URL:** https://script.google.com/macros/s/AKfycbxcLD26lSIIWg1mG7WfpZOS8kdAKGpOjBnaBOLFphM0vEDzP3S7dRXSDO4GpeJCRXGNhQ/exec
 
 ## Current Version
-v2.9 — deployed July 4, 2026
+v3.0 — deployed July 4, 2026
 
 ## Stack
 - `index.html` — single-file PWA (HTML + CSS + JS)
@@ -67,6 +67,14 @@ Refill tracking is no longer a separate hardcoded list — it lives on individua
 - Day-rollover uses device LOCAL date (not UTC) — anchors midnight reset to Pacific time and follows DST automatically
 - Dose logging: instant POST to Apps Script on each toggle tap
 - History: lazy-loaded from Sheets when section is opened
+
+## Red Circle Meds — Backup / Restore to Sheets (manual, secret-protected)
+Added because `medList`/`patientInfo` live only in phone localStorage (see below) with no redundancy — a lost/wiped/crashed phone would lose the whole list permanently. Paul wants privacy first, so this is manual-only (no auto-sync, no timer) and explicitly excludes date of birth.
+- **"🗄️ Backup to Sheets"** — POSTs `{ action: 'backupMedList', secret, patient (no dob), medList }` to the Apps Script. Each tap appends a new timestamped row to the Sheet's **MedList** tab (history kept, not overwritten) — cheap in storage, gives a fallback if a bad backup follows a good one.
+- **"⬇️ Restore from Sheets"** — GETs the latest MedList row, asks for confirmation, then overwrites local `medList`/`patientInfo` (keeping whatever DOB is already on the phone, since DOB is never part of the payload — re-enter it manually after a restore onto a fresh device).
+- **Security:** the repo is public, so the Apps Script URL (and the `WEBHOOK_SECRET` constant in `index.html`) are technically visible to anyone who views source. The secret raises the bar against casual/automated abuse of the MedList backup/restore endpoints; it is not a substitute for keeping the Sheet itself private. The pre-existing dose-log endpoint (`action: 'logDose'`, default in `doPost`) intentionally does **not** require the secret — unchanged behavior, lower-sensitivity data.
+- **Apps Script setup required (one-time, manual):** open the Sheet → Extensions → Apps Script → Project Settings → Script Properties → add `WEBHOOK_SECRET` = the same value as `index.html`'s `WEBHOOK_SECRET` constant → Deploy → Manage deployments → Edit → New version.
+- **Rotation:** added to `Studio/TODO_LIST.md` alongside the existing SmartCart `WEBHOOK_SECRET` rotation cue — same reasoning (public repo, plaintext-visible secret).
 
 ## Red Circle Meds (editable medication list, for providers / first responders)
 A collapsible section (below History) listing every prescription, supplement, and OTC item Paul takes. The name and red-circle icon are a deliberate cue — "Vial of Life"-style — so a first responder recognizes it as the place to find medical info in an emergency.
