@@ -231,3 +231,68 @@
 - After GitHub Pages updates, fully close and reopen the PWA on the iPhone (or wait for the new service worker to activate) so the new `index.html`/`sw.js` load.
 
 **Status:** v2.5 pushed. Watching for first real History entries to confirm end-to-end.
+
+---
+
+## 2026-06-26 — Sandbox GitHub push access (fine-grained PAT)
+
+Same PAT used for Golf also covers this repo — Resource owner: personal account `kamloopspaul-a11y`, repos: `golf-scores` + `meds-tracker`, Contents: Read/write, expires 2026-12-31. Stored in `Studio/.claude-config` (`GITHUB_PAT_PERSONAL`); this repo's `origin` remote now embeds the token. `git push origin main` verified working from the sandbox (repo was already in sync — Paul's earlier commit `d4ac4bd` was already on `origin/main`, but the auth round-trip confirmed the token works). Terminal remains available as fallback.
+
+## 2026-07-04
+
+**Did:**
+- Added a new "Medication List (for Providers)" section to `index.html` (below History) — a full, shareable summary of everything Paul takes, for handing to doctors/pharmacists.
+  - Patient block: name, DOB (Nov 6, 1958), conditions (Hyperthyroidism, COPD, mild Asthma), allergies (NKDA).
+  - Full item table grouped by category: Prescription (Methimazole, Propranolol, Inspiolto, Pulmicort), Prescription — As Needed (Sinus decongestant/pseudoephedrine), Supplement — Daily (Creatine, Baja Gold mineral salt, B12 methylcobalamin, Nattokinase), Supplement — Winter Oct–Mar (D3, K2/MK-7), Over-the-Counter — As Needed (Tylenol). Each row has Name, Dose, Frequency, Purpose.
+  - B12 note captured as-provided: started twice-daily 2000 mcg in June 2026 after bloodwork showed deficiency; will drop to once-daily 1000 mcg once levels normalize.
+  - "🖨️ Print / Share with Provider" button triggers `window.print()`; dedicated print CSS (`#printArea`, hidden normally via `.print-only`, shown only in `@media print`) hides the rest of the app so the printed/shared page shows just the patient info + tables.
+  - Data lives in new `PATIENT` and `MED_LIST` JS constants — update directly in `index.html` when prescriptions or supplements change (no separate data source yet).
+- Bumped version v2.6 → v2.7.
+- Updated `PROJECT.md`: layout diagram, current version, and new "Medication List (for Providers)" section documenting the data model and print mechanism.
+
+**Verification:**
+- Checked `index.html` tag balance programmatically (`<details>`/`</details>` and `<div>`/`</div>` counts match).
+- Did not yet test on Paul's phone/browser — pending live check after GitHub Pages deploy.
+
+**Status:** v2.7 ready to push. Not yet deployed to GitHub Pages.
+
+**Next:**
+- Push to GitHub and confirm GitHub Pages serves v2.7.
+- Paul to open the new "▸ Medication List (for Providers)" section, tap Print/Share, and confirm it renders/prints cleanly on iPhone (Safari share sheet → Print or Save to PDF).
+- If any dose/frequency details are wrong or change, edit `MED_LIST` / `PATIENT` directly in `index.html`.
+- Consider moving med/supplement data to the Google Sheet later if Paul wants a single source of truth instead of hardcoded JS.
+
+---
+
+## 2026-07-04 (cont'd) — Editable list, unified refill tracking, Red Circle Meds
+
+**Did:**
+- Made the Medication List fully editable in-app (v2.8 → v2.9), per Paul's request to add/edit/delete entries himself as prescriptions and supplements change over time:
+  - `PATIENT` and `MED_LIST` are no longer hardcoded — moved to localStorage (`patientInfo`, `medList`), seeded once from `DEFAULT_PATIENT`/`DEFAULT_MED_LIST`.
+  - Added a lightweight modal (`#modalOverlay`/`#modalBox`) for adding/editing an item (Category with autocomplete, Name, Dose, Frequency, Purpose) and for editing patient info (Name, DOB, Conditions, Allergies).
+  - "✏️ Edit List" toggle reveals per-row edit icons, an "+ Add Item" button, and a patient-info edit icon; "🖨️ Print / Share" always visible. Print output (`#printArea`) never shows edit controls.
+- Unified refill/renewal tracking into the medication list per Paul's follow-up ("future prescribed medicines will also need Refill and Prescription Renewal Notices"): each item can carry an optional `refill` object (daysSupply, nextRefill, renewable, doctor, status). The item modal has a "🔔 Track refill / renewal reminders" checkbox that reveals those fields — checking it on *any* item (new or existing) automatically gives it a row in Refill Dates and makes it eligible for the amber/red notice thresholds, not just the original 3 meds.
+  - Removed the old standalone `REFILLS` array and its separate `refillDates`/`refillStatus` localStorage keys.
+  - Added `migrateLegacyRefillData()` — a one-time migration that folds any pre-existing `refillDates`/`refillStatus` values into the new item-based model on first load, so in-progress refill cycles (e.g. Inspiolto's) aren't lost.
+- Paul initially asked to remove the "History (last 14 days)" section, then retracted that — History is unchanged and still sits between Refill Dates and the new section.
+- Renamed "Medication List (for Providers)" to **"🔴 Red Circle Meds"** — Paul's own label, a deliberate first-responder cue (Vial-of-Life style: a recognizable marker so EMS/paramedics know where to find medical info in an emergency). Kept it positioned as the last collapsible section, below History. Styled its summary in red/bold (`.medlist-section.emergency`).
+- Note: an earlier misstep — I initially renamed the *app itself* (title, header, manifest) to "Red Circle Meds" before Paul clarified he meant only the in-app link/section. Reverted the app name back to "Meds" before making the correct change.
+- Bumped version v2.7 → v2.8 → v2.9.
+- Updated `PROJECT.md`: layout diagram, refill config section (now item-based, not a fixed table), and rewrote the "Medication List" section as "Red Circle Meds" documenting the new editable/refill-integrated design.
+
+**Verification:**
+- Checked tag balance (`<details>`/`</details>`, `<div>`/`</div>`) and ran `node --check` against the extracted `<script>` block — both clean.
+- Confirmed every function referenced by an `onclick`/event listener is defined (`grep` of `function ` declarations against call sites).
+- Not yet tested live in Safari/iPhone — pending push to GitHub Pages.
+
+**Status:** v2.9 ready to push, not yet deployed.
+
+**Next:**
+- Push to GitHub, confirm GitHub Pages serves v2.9, and test the full edit flow on iPhone: add a new prescription with refill tracking on, confirm it shows up under Refill Dates and triggers notices at the right thresholds; edit/delete an existing item; edit patient info; confirm Print/Share still looks right.
+- Since `medList`/`patientInfo` now live only in localStorage, remember this data does **not** sync across devices or survive a browser data wipe — consider a manual export/import (e.g. copy-to-clipboard JSON) if that becomes a concern.
+- Consider whether "Red Circle Meds" should also get a distinct icon/emoji cue on the Home Screen shortcut itself later (explicitly out of scope for this round — Paul wants the app name unchanged).
+
+---
+**Addendum:** Bumped `sw.js` cache name `meds-v2-6` → `meds-v2-9` to match, so the iPhone's service worker picks up the new `index.html` instead of serving a stale cached copy.
+
+---

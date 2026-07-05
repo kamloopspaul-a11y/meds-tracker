@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- See PROJECT.md for full changelog and version history -->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -221,6 +222,137 @@
     .history-loading { font-size: 0.8rem; color: var(--muted); padding: 8px 0; }
     .history-error   { font-size: 0.8rem; color: var(--red);   padding: 8px 0; }
 
+    /* Medication list (for providers) */
+    .medlist-section { margin: 24px 16px 0; }
+    .medlist-section summary {
+      font-size: 1rem; font-weight: 600; color: var(--muted);
+      cursor: pointer; padding: 8px 0; user-select: none;
+      list-style: none;
+    }
+    .medlist-section summary::-webkit-details-marker,
+    .medlist-section summary::marker { display: none; }
+    .medlist-section.emergency summary { color: var(--red); font-weight: 700; }
+    .medlist-content { margin-top: 10px; }
+
+    .medlist-toolbar { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+
+    .print-btn {
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 9px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--accent);
+      background: var(--accent-bg);
+      color: var(--accent);
+      cursor: pointer;
+    }
+    .print-btn:active { background: #d0e8d8; }
+
+    .edit-toggle-btn {
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 9px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+    }
+    .edit-toggle-btn:active { background: #f0f0f0; }
+
+    .add-item-btn {
+      display: block;
+      width: 100%;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px dashed var(--accent);
+      background: var(--accent-bg);
+      color: var(--accent);
+      cursor: pointer;
+      margin-bottom: 14px;
+    }
+
+    .patient-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      font-size: 0.85rem;
+    }
+    .patient-block-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .patient-name { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .patient-row { margin-top: 2px; }
+    .patient-row.muted { color: var(--muted); font-size: 0.78rem; margin-top: 6px; }
+
+    .row-edit-btn {
+      font-size: 0.75rem; font-weight: 600; padding: 5px 10px;
+      border-radius: 6px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--muted); cursor: pointer;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .row-actions { text-align: right; white-space: nowrap; }
+    .row-edit-icon {
+      border: none; background: none; font-size: 0.95rem;
+      cursor: pointer; padding: 2px 6px;
+    }
+
+    .medlist-empty { font-size: 0.85rem; color: var(--muted); padding: 12px 0; text-align: center; }
+
+    /* Edit/Add modal */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+      align-items: center; justify-content: center; z-index: 200; padding: 20px;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-box {
+      background: var(--surface); border-radius: 14px; padding: 20px;
+      width: 100%; max-width: 400px; max-height: 85vh; overflow-y: auto;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+    .modal-title { font-size: 1rem; font-weight: 700; margin-bottom: 12px; }
+    .modal-label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--muted); margin: 10px 0 4px; }
+    .modal-input {
+      width: 100%; font-size: 0.9rem; padding: 9px 10px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--bg); color: var(--text);
+      font-family: inherit;
+    }
+    .modal-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; gap: 8px; }
+    .modal-actions-right { display: flex; gap: 8px; margin-left: auto; }
+    .modal-btn { font-size: 0.85rem; font-weight: 600; padding: 9px 14px; border-radius: 8px; border: 1px solid transparent; cursor: pointer; }
+    .modal-btn.primary { background: var(--accent); color: #fff; }
+    .modal-btn.ghost   { background: var(--surface); border-color: var(--border); color: var(--text); }
+    .modal-btn.danger  { background: #fdecea; border-color: var(--red); color: var(--red); }
+
+    .medlist-cat {
+      font-size: 0.82rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.03em; color: var(--accent); margin: 16px 0 6px;
+    }
+    .medlist-table {
+      width: 100%; border-collapse: collapse; font-size: 0.8rem;
+    }
+    .medlist-table th {
+      text-align: left; color: var(--muted); font-weight: 600;
+      padding: 4px 6px; border-bottom: 1px solid var(--border);
+    }
+    .medlist-table td {
+      padding: 6px; border-bottom: 1px solid var(--border); color: var(--text);
+    }
+    .medlist-table tr:last-child td { border-bottom: none; }
+
+    .medlist-footnote {
+      font-size: 0.75rem; color: var(--muted); margin-top: 16px; font-style: italic;
+    }
+
+    .print-only { display: none; }
+    @media print {
+      body > *:not(#printArea) { display: none !important; }
+      #printArea { display: block !important; padding: 20px; }
+      #printArea .patient-block { border: 1px solid #999; }
+    }
+
     footer { text-align: center; margin-top: 36px; font-size: 0.72rem; color: var(--border); }
   </style>
 </head>
@@ -303,25 +435,305 @@
   </details>
 </div>
 
-<footer>Meds v2.6</footer>
+<!-- Red Circle Meds: full Rx/supplement list for first responders / providers -->
+<div class="medlist-section emergency" id="medlistSection">
+  <details id="medlistDetails">
+    <summary>🔴 Red Circle Meds</summary>
+    <div class="medlist-content">
+      <div id="medlistBody"></div>
+      <div class="medlist-footnote">Not medical advice — verify all doses with your pharmacist or physician.</div>
+    </div>
+  </details>
+</div>
+
+<div id="printArea" class="print-only"></div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box" id="modalBox"></div>
+</div>
+
+<footer>Meds v2.9</footer>
 
 <script>
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyJnG-4pevm-343Cw9Vi-lIgNwtnDrcPEG2Icl0HFG5QSAB0DTC2ooZKmCEUdlmuEp4Bw/exec';
 
-  // ── Refill config (seed data — only used on first run) ────────────────────────
-  // nextRefill is seeded into localStorage on first load.
-  // After that, the "Picked up" button advances it — no code changes needed.
-  const REFILLS = [
-    { id: 'thyroid',   name: 'Thyroid Meds',        daysSupply: 90,  nextRefill: '2026-07-15', renewable: true,  doctor: null },
-    { id: 'inspiolto', name: 'Inspiolto Respimat',   daysSupply: 30,  nextRefill: '2026-06-28', renewable: false, doctor: 'Dr. Jones' },
-    { id: 'pulmicort', name: 'Pulmicort Turbuhaler', daysSupply: 100, nextRefill: '2026-07-28', renewable: false, doctor: 'Dr. Jones' }
-  ];
-
   const THRESH_RX_AMBER = 20;
   const THRESH_RX_RED   = 7;
   const THRESH_PHARMACY = 7;
+  const THRESH_RENEW    = 20; // days before due that "Renew Meds" auto-activates
 
   const MEDS = ['thyroid', 'am-inhalers', 'pm-inhalers'];
+
+  // ── Medication list for providers (patient summary + editable Rx/supplements) ─
+  // This is the single source of truth for every prescription, supplement, and
+  // OTC item. Prescriptions that need refill/renewal reminders carry a `refill`
+  // object; everything else leaves `refill: null`. Add/Edit/Delete happens
+  // through the in-app modal — DEFAULT_* below only seeds localStorage on first run.
+  const DEFAULT_PATIENT = {
+    name: 'Paul',
+    dob: 'DOB-REDACTED',
+    conditions: ['Hyperthyroidism', 'COPD', 'Asthma (mild)'],
+    allergies: 'No known drug allergies (NKDA)'
+  };
+
+  const DEFAULT_MED_LIST = [
+    { id: 'thyroid',    category: 'Prescription', name: 'Methimazole (Jamp)', dose: '10 mg', frequency: 'Once daily, morning', purpose: 'Hyperthyroidism',
+      refill: { track: true, label: 'Thyroid Meds', daysSupply: 90, nextRefill: '2026-07-15', renewable: true, doctor: null, status: 'filled' } },
+    { id: 'propranolol', category: 'Prescription', name: 'Propranolol (PRZ)', dose: '20 mg', frequency: 'Once daily, morning', purpose: 'Hyperthyroidism (heart rate control)', refill: null },
+    { id: 'inspiolto',  category: 'Prescription', name: 'Inspiolto Respimat', dose: '2.5 mcg', frequency: 'Twice daily (AM & PM)', purpose: 'COPD',
+      refill: { track: true, label: 'Inspiolto Respimat', daysSupply: 30, nextRefill: '2026-06-28', renewable: false, doctor: 'Dr. Jones', status: 'filled' } },
+    { id: 'pulmicort',  category: 'Prescription', name: 'Pulmicort Turbuhaler', dose: '100 mcg', frequency: 'Twice daily (AM & PM)', purpose: 'COPD / asthma',
+      refill: { track: true, label: 'Pulmicort Turbuhaler', daysSupply: 100, nextRefill: '2026-07-28', renewable: false, doctor: 'Dr. Jones', status: 'filled' } },
+    { id: 'decongestant', category: 'Prescription — As Needed', name: 'Sinus Decongestant (Pseudoephedrine HCl)', dose: '60 mg', frequency: 'As needed', purpose: 'Nasal congestion', refill: null },
+    { id: 'creatine',   category: 'Supplement — Daily', name: 'Creatine Monohydrate', dose: '5 g', frequency: 'Once daily', purpose: 'General health', refill: null },
+    { id: 'baja-salt',  category: 'Supplement — Daily', name: 'Baja Gold Organic Coarse Mineral Salt', dose: '1 tsp', frequency: 'Once daily', purpose: 'General health / electrolytes', refill: null },
+    { id: 'b12',        category: 'Supplement — Daily', name: 'Vitamin B12 (Methylcobalamin, sublingual)', dose: '2000 mcg', frequency: 'Twice daily since Jun 2026 (B12 deficiency); reducing to 1000 mcg once daily once bloodwork normalizes', purpose: 'B12 deficiency', refill: null },
+    { id: 'nattokinase', category: 'Supplement — Daily', name: 'Nattokinase', dose: '100 mg', frequency: 'Once daily', purpose: 'General health / circulatory support', refill: null },
+    { id: 'vitamin-d3', category: 'Supplement — Winter (Oct–Mar)', name: 'Vitamin D3', dose: '10,000 IU', frequency: 'Once daily, winter months only', purpose: 'Immune support', refill: null },
+    { id: 'vitamin-k2', category: 'Supplement — Winter (Oct–Mar)', name: 'Vitamin K2 (MK-7)', dose: '120 mcg', frequency: 'Once daily, winter months only', purpose: 'Directs calcium into bone; supports D3', refill: null },
+    { id: 'tylenol',    category: 'Over-the-Counter — As Needed', name: 'Tylenol (Acetaminophen)', dose: '1000 mg', frequency: 'As needed', purpose: 'Headaches, muscle soreness', refill: null }
+  ];
+
+  function genId() { return 'item_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  // ── Patient + medication list storage ────────────────────────────────────────
+  function loadPatient() {
+    const raw = localStorage.getItem('patientInfo');
+    if (raw) return JSON.parse(raw);
+    savePatient(DEFAULT_PATIENT);
+    return JSON.parse(JSON.stringify(DEFAULT_PATIENT));
+  }
+  function savePatient(p) { localStorage.setItem('patientInfo', JSON.stringify(p)); }
+
+  function loadMedList() {
+    const raw = localStorage.getItem('medList');
+    if (raw) return JSON.parse(raw);
+    const seeded = JSON.parse(JSON.stringify(DEFAULT_MED_LIST));
+    migrateLegacyRefillData(seeded);
+    saveMedList(seeded);
+    return seeded;
+  }
+  function saveMedList(list) { localStorage.setItem('medList', JSON.stringify(list)); }
+
+  // One-time migration from the old separate 'refillDates'/'refillStatus' stores
+  // (keyed by 'thyroid'/'inspiolto'/'pulmicort') into the unified medList items,
+  // so in-progress refill cycles aren't lost when this version first loads.
+  function migrateLegacyRefillData(list) {
+    const legacyDates  = JSON.parse(localStorage.getItem('refillDates')  || 'null');
+    const legacyStatus = JSON.parse(localStorage.getItem('refillStatus') || 'null');
+    if (!legacyDates && !legacyStatus) return;
+    list.forEach(item => {
+      if (!item.refill) return;
+      if (legacyDates  && legacyDates[item.id])  item.refill.nextRefill = legacyDates[item.id];
+      if (legacyStatus && legacyStatus[item.id]) item.refill.status     = legacyStatus[item.id];
+    });
+    localStorage.removeItem('refillDates');
+    localStorage.removeItem('refillStatus');
+  }
+
+  // ── Red Circle Meds: render + edit (add/edit/delete) ─────────────────────────
+  let medListEditMode = false;
+
+  function toggleMedListEdit() {
+    medListEditMode = !medListEditMode;
+    renderMedList();
+  }
+
+  function buildPatientBlockHTML(patient, editable) {
+    return `
+      <div class="patient-block">
+        <div class="patient-block-header">
+          <div class="patient-name">${esc(patient.name)}</div>
+          ${editable ? `<button class="row-edit-btn" onclick="openPatientModal()">✏️ Edit</button>` : ''}
+        </div>
+        <div class="patient-row"><strong>DOB:</strong> ${friendlyDate(patient.dob)}</div>
+        <div class="patient-row"><strong>Conditions:</strong> ${esc(patient.conditions.join(', '))}</div>
+        <div class="patient-row"><strong>Allergies:</strong> ${esc(patient.allergies)}</div>
+        <div class="patient-row muted">List as of ${friendlyDate(todayStr())}</div>
+      </div>`;
+  }
+
+  function buildTablesHTML(list, editable) {
+    if (!list.length) return '<div class="medlist-empty">No items yet — tap "+ Add Item" to get started.</div>';
+    const cats = [...new Set(list.map(m => m.category))];
+    let html = '';
+    cats.forEach(cat => {
+      html += `<div class="medlist-cat">${esc(cat)}</div><table class="medlist-table"><thead><tr><th>Name</th><th>Dose</th><th>Frequency</th><th>Purpose</th>${editable ? '<th></th>' : ''}</tr></thead><tbody>`;
+      list.forEach((m, idx) => {
+        if (m.category !== cat) return;
+        const bell = (m.refill && m.refill.track) ? ' 🔔' : '';
+        html += `<tr><td>${esc(m.name)}${bell}</td><td>${esc(m.dose)}</td><td>${esc(m.frequency)}</td><td>${esc(m.purpose)}</td>`;
+        if (editable) html += `<td class="row-actions"><button class="row-edit-icon" onclick="openItemModal(${idx})">✏️</button></td>`;
+        html += `</tr>`;
+      });
+      html += `</tbody></table>`;
+    });
+    return html;
+  }
+
+  function renderMedList() {
+    const patient = loadPatient();
+    const list    = loadMedList();
+
+    let bodyHtml = `<div class="medlist-toolbar">
+      <button class="print-btn" onclick="window.print()">🖨️ Print / Share</button>
+      <button class="edit-toggle-btn" onclick="toggleMedListEdit()">${medListEditMode ? '✓ Done Editing' : '✏️ Edit List'}</button>
+    </div>`;
+    bodyHtml += buildPatientBlockHTML(patient, medListEditMode);
+    if (medListEditMode) bodyHtml += `<button class="add-item-btn" onclick="openItemModal(null)">+ Add Item</button>`;
+    bodyHtml += buildTablesHTML(list, medListEditMode);
+    document.getElementById('medlistBody').innerHTML = bodyHtml;
+
+    document.getElementById('printArea').innerHTML =
+      buildPatientBlockHTML(patient, false) + buildTablesHTML(list, false);
+  }
+
+  // ── Modal (add/edit item, edit patient) ───────────────────────────────────────
+  function openModal(html) {
+    document.getElementById('modalBox').innerHTML = html;
+    document.getElementById('modalOverlay').classList.add('show');
+  }
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('show');
+    document.getElementById('modalBox').innerHTML = '';
+  }
+
+  function toggleRefillFields() {
+    const on = document.getElementById('mTrackRefill').checked;
+    document.getElementById('refillFields').style.display = on ? 'block' : 'none';
+  }
+
+  function openItemModal(idx) {
+    const list = loadMedList();
+    const isEdit = idx !== null && idx !== undefined;
+    const item = isEdit ? list[idx] : { category: '', name: '', dose: '', frequency: '', purpose: '', refill: null };
+    const cats = [...new Set(list.map(m => m.category))];
+    const datalist = cats.map(c => `<option value="${esc(c)}">`).join('');
+    const r = item.refill || {};
+    const trackChecked = r.track ? 'checked' : '';
+
+    const html = `
+      <h3 class="modal-title">${isEdit ? 'Edit Item' : 'Add Item'}</h3>
+      <label class="modal-label">Category</label>
+      <input class="modal-input" id="mCategory" list="catList" value="${esc(item.category)}" placeholder="e.g. Supplement — Daily">
+      <datalist id="catList">${datalist}</datalist>
+      <label class="modal-label">Name</label>
+      <input class="modal-input" id="mName" value="${esc(item.name)}" placeholder="e.g. Vitamin D3">
+      <label class="modal-label">Dose</label>
+      <input class="modal-input" id="mDose" value="${esc(item.dose)}" placeholder="e.g. 1000 IU">
+      <label class="modal-label">Frequency</label>
+      <input class="modal-input" id="mFrequency" value="${esc(item.frequency)}" placeholder="e.g. Once daily">
+      <label class="modal-label">Purpose</label>
+      <input class="modal-input" id="mPurpose" value="${esc(item.purpose)}" placeholder="e.g. Bone health">
+
+      <label class="modal-label" style="display:flex; align-items:center; gap:8px; margin-top:16px;">
+        <input type="checkbox" id="mTrackRefill" onchange="toggleRefillFields()" ${trackChecked} style="width:auto;">
+        🔔 Track refill / renewal reminders
+      </label>
+      <div id="refillFields" style="display:${r.track ? 'block' : 'none'};">
+        <label class="modal-label">Days Supply</label>
+        <input class="modal-input" id="mDaysSupply" type="number" min="1" value="${esc(r.daysSupply || '')}" placeholder="e.g. 30">
+        <label class="modal-label">Next Refill Date</label>
+        <input class="modal-input" id="mNextRefill" type="date" value="${esc(r.nextRefill || '')}">
+        <label class="modal-label" style="display:flex; align-items:center; gap:8px;">
+          <input type="checkbox" id="mRenewable" ${r.renewable ? 'checked' : ''} style="width:auto;">
+          Can be refilled without a new doctor visit
+        </label>
+        <label class="modal-label">Doctor (for renewal calls)</label>
+        <input class="modal-input" id="mDoctor" value="${esc(r.doctor || '')}" placeholder="e.g. Dr. Jones">
+      </div>
+
+      <div class="modal-actions">
+        ${isEdit ? `<button class="modal-btn danger" onclick="deleteItem(${idx})">Delete</button>` : '<span></span>'}
+        <div class="modal-actions-right">
+          <button class="modal-btn ghost" onclick="closeModal()">Cancel</button>
+          <button class="modal-btn primary" onclick="saveItem(${isEdit ? idx : 'null'})">Save</button>
+        </div>
+      </div>`;
+    openModal(html);
+  }
+
+  function saveItem(idx) {
+    const category  = document.getElementById('mCategory').value.trim();
+    const name      = document.getElementById('mName').value.trim();
+    const dose      = document.getElementById('mDose').value.trim();
+    const frequency = document.getElementById('mFrequency').value.trim();
+    const purpose   = document.getElementById('mPurpose').value.trim();
+    if (!category || !name) { alert('Category and Name are required.'); return; }
+
+    const track = document.getElementById('mTrackRefill').checked;
+    let refill = null;
+    if (track) {
+      const daysSupply = parseInt(document.getElementById('mDaysSupply').value, 10) || 0;
+      const nextRefill = document.getElementById('mNextRefill').value;
+      const renewable  = document.getElementById('mRenewable').checked;
+      const doctor     = document.getElementById('mDoctor').value.trim() || null;
+      if (!nextRefill) { alert('Please set a Next Refill Date, or uncheck refill tracking.'); return; }
+      refill = { track: true, label: name, daysSupply, nextRefill, renewable, doctor, status: 'filled' };
+    }
+
+    const list = loadMedList();
+    if (idx === null || idx === undefined) {
+      // Preserve existing refill status if editing kept the same tracked item; new items start at 'filled'.
+      list.push({ id: genId(), category, name, dose, frequency, purpose, refill });
+    } else {
+      const existing = list[idx];
+      if (refill && existing.refill && existing.refill.track) {
+        refill.status = existing.refill.status; // don't reset an in-progress refill cycle
+      }
+      list[idx] = { id: existing.id, category, name, dose, frequency, purpose, refill };
+    }
+    saveMedList(list);
+    closeModal();
+    renderMedList();
+    renderNotices();
+  }
+
+  function deleteItem(idx) {
+    if (!confirm('Delete this item?')) return;
+    const list = loadMedList();
+    list.splice(idx, 1);
+    saveMedList(list);
+    closeModal();
+    renderMedList();
+    renderNotices();
+  }
+
+  function openPatientModal() {
+    const p = loadPatient();
+    const html = `
+      <h3 class="modal-title">Edit Patient Info</h3>
+      <label class="modal-label">Name</label>
+      <input class="modal-input" id="pName" value="${esc(p.name)}">
+      <label class="modal-label">Date of Birth</label>
+      <input class="modal-input" id="pDob" type="date" value="${esc(p.dob)}">
+      <label class="modal-label">Conditions (comma-separated)</label>
+      <input class="modal-input" id="pConditions" value="${esc(p.conditions.join(', '))}">
+      <label class="modal-label">Allergies</label>
+      <input class="modal-input" id="pAllergies" value="${esc(p.allergies)}">
+      <div class="modal-actions">
+        <span></span>
+        <div class="modal-actions-right">
+          <button class="modal-btn ghost" onclick="closeModal()">Cancel</button>
+          <button class="modal-btn primary" onclick="savePatientForm()">Save</button>
+        </div>
+      </div>`;
+    openModal(html);
+  }
+
+  function savePatientForm() {
+    const name = document.getElementById('pName').value.trim();
+    const dob  = document.getElementById('pDob').value;
+    const conditions = document.getElementById('pConditions').value.split(',').map(s => s.trim()).filter(Boolean);
+    const allergies  = document.getElementById('pAllergies').value.trim();
+    savePatient({ name, dob, conditions, allergies });
+    closeModal();
+    renderMedList();
+  }
 
   // ── Helpers ───────────────────────────────────────────────────────────────────
   function todayStr() {
@@ -346,87 +758,59 @@
     return d.toISOString().slice(0, 10);
   }
 
-  // ── Refill date storage ───────────────────────────────────────────────────────
-  function loadRefillDates() {
-    const stored = JSON.parse(localStorage.getItem('refillDates') || '{}');
-    // Seed any missing entries from config defaults
-    let seeded = false;
-    REFILLS.forEach(med => {
-      if (!stored[med.id]) { stored[med.id] = med.nextRefill; seeded = true; }
-    });
-    if (seeded) localStorage.setItem('refillDates', JSON.stringify(stored));
-    return stored;
-  }
-
-  function saveRefillDates(dates) {
-    localStorage.setItem('refillDates', JSON.stringify(dates));
-  }
-
   // ── Refill status: Filled → Renew Meds → Ordered → Filled ────────────────────
-  const THRESH_RENEW = 20; // days before due that "Renew Meds" auto-activates
-
-  function loadRefillStatus() {
-    const stored = JSON.parse(localStorage.getItem('refillStatus') || '{}');
-    let seeded = false;
-    REFILLS.forEach(med => {
-      if (!stored[med.id]) { stored[med.id] = 'filled'; seeded = true; }
-    });
-    if (seeded) localStorage.setItem('refillStatus', JSON.stringify(stored));
-    return stored;
-  }
-
-  function saveRefillStatus(status) {
-    localStorage.setItem('refillStatus', JSON.stringify(status));
-  }
-
+  // Refill tracking now lives directly on each medList item's `refill` object
+  // (see DEFAULT_MED_LIST above), so any prescription added or edited through
+  // the Medication List modal — not just the original 3 — gets notices and a
+  // row in the Refill Dates list automatically.
   function advanceRefillStatus(id) {
-    const status = loadRefillStatus();
-    const dates  = loadRefillDates();
-    const med    = REFILLS.find(m => m.id === id);
-    if (!med) return;
+    const list = loadMedList();
+    const item = list.find(m => m.id === id);
+    if (!item || !item.refill || !item.refill.track) return;
 
-    if (status[id] === 'renew') {
-      status[id] = 'ordered';
-    } else if (status[id] === 'ordered') {
-      status[id] = 'filled';
-      dates[id] = addDays(dates[id], med.daysSupply);
-      saveRefillDates(dates);
+    if (item.refill.status === 'renew') {
+      item.refill.status = 'ordered';
+    } else if (item.refill.status === 'ordered') {
+      item.refill.status = 'filled';
+      item.refill.nextRefill = addDays(item.refill.nextRefill, item.refill.daysSupply);
     } else {
       return; // 'filled' is dimmed/inert — only the date threshold advances it
     }
-    saveRefillStatus(status);
+    saveMedList(list);
     renderRefillList();
     renderNotices();
   }
 
   // ── Notices ───────────────────────────────────────────────────────────────────
   function renderNotices() {
-    const area  = document.getElementById('noticeArea');
-    const dates = loadRefillDates();
-    const out   = [];
+    const area = document.getElementById('noticeArea');
+    const list = loadMedList().filter(m => m.refill && m.refill.track);
+    const out  = [];
 
-    REFILLS.forEach(med => {
-      const days = daysUntil(dates[med.id]);
+    list.forEach(item => {
+      const r = item.refill;
+      const label = r.label || item.name;
+      const days = daysUntil(r.nextRefill);
 
       if (days < 0) {
         out.push({ cls: 'red', icon: '❗',
-          text: `${med.name} refill is ${Math.abs(days)} day${Math.abs(days)===1?'':'s'} overdue — call Safeway today.` });
+          text: `${label} refill is ${Math.abs(days)} day${Math.abs(days)===1?'':'s'} overdue — call the pharmacy today.` });
         return;
       }
 
-      if (!med.renewable && med.doctor) {
+      if (!r.renewable && r.doctor) {
         if (days <= THRESH_RX_RED) {
           out.push({ cls: 'red', icon: '🚨',
-            text: `Call ${med.doctor} urgently — ${med.name} is non-renewable and due in ${days} day${days===1?'':'s'}. New Rx required.` });
+            text: `Call ${r.doctor} urgently — ${label} is non-renewable and due in ${days} day${days===1?'':'s'}. New Rx required.` });
         } else if (days <= THRESH_RX_AMBER) {
           out.push({ cls: 'amber', icon: '⚠️',
-            text: `Call ${med.doctor} — ${med.name} renewal in ${days} days. Non-renewable Rx: book soon (allow time for blood tests if needed).` });
+            text: `Call ${r.doctor} — ${label} renewal in ${days} days. Non-renewable Rx: book soon (allow time for blood tests if needed).` });
         }
       }
 
       if (days <= THRESH_PHARMACY) {
         out.push({ cls: 'red', icon: '💊',
-          text: `Call Safeway — ${med.name} refill due in ${days} day${days===1?'':'s'}.` });
+          text: `Call the pharmacy — ${label} refill due in ${days} day${days===1?'':'s'}.` });
       }
     });
 
@@ -443,38 +827,45 @@
   };
 
   function renderRefillList() {
-    const list   = document.getElementById('refillList');
-    const dates  = loadRefillDates();
-    const status = loadRefillStatus();
+    const listEl = document.getElementById('refillList');
+    const list   = loadMedList();
+    const tracked = list.filter(m => m.refill && m.refill.track);
 
     // Auto-advance Filled → Renew Meds once within the renewal window
     let changed = false;
-    REFILLS.forEach(med => {
-      if (status[med.id] === 'filled' && daysUntil(dates[med.id]) <= THRESH_RENEW) {
-        status[med.id] = 'renew';
+    tracked.forEach(item => {
+      if (item.refill.status === 'filled' && daysUntil(item.refill.nextRefill) <= THRESH_RENEW) {
+        item.refill.status = 'renew';
         changed = true;
       }
     });
-    if (changed) saveRefillStatus(status);
+    if (changed) saveMedList(list);
 
-    list.innerHTML = REFILLS.map(med => {
-      const days     = daysUntil(dates[med.id]);
-      const friendly = friendlyDate(dates[med.id]);
+    if (!tracked.length) {
+      listEl.innerHTML = '<div class="medlist-empty">No prescriptions are being tracked for refills yet. Add one from the Medication List below.</div>';
+      return;
+    }
+
+    listEl.innerHTML = tracked.map(item => {
+      const r        = item.refill;
+      const label    = r.label || item.name;
+      const days     = daysUntil(r.nextRefill);
+      const friendly = friendlyDate(r.nextRefill);
       let dueClass   = '';
       let dueLabel   = `Next refill: ${friendly}`;
-      if (days < 0)              { dueClass = 'urgent'; dueLabel = `Overdue by ${Math.abs(days)} day${Math.abs(days)===1?'':'s'} — ${friendly}`; }
-      else if (days <= THRESH_RX_RED)   { dueClass = 'urgent'; dueLabel = `Due in ${days} day${days===1?'':'s'} — ${friendly}`; }
-      else if (days <= THRESH_RX_AMBER) { dueClass = 'soon';   dueLabel = `Due in ${days} days — ${friendly}`; }
+      if (days < 0)                      { dueClass = 'urgent'; dueLabel = `Overdue by ${Math.abs(days)} day${Math.abs(days)===1?'':'s'} — ${friendly}`; }
+      else if (days <= THRESH_RX_RED)    { dueClass = 'urgent'; dueLabel = `Due in ${days} day${days===1?'':'s'} — ${friendly}`; }
+      else if (days <= THRESH_RX_AMBER)  { dueClass = 'soon';   dueLabel = `Due in ${days} days — ${friendly}`; }
 
-      const st = REFILL_STATUS_LABELS[status[med.id]] || REFILL_STATUS_LABELS.filled;
+      const st = REFILL_STATUS_LABELS[r.status] || REFILL_STATUS_LABELS.filled;
 
       return `
         <div class="refill-row">
           <div class="refill-info">
-            <div class="refill-name">${med.name}</div>
+            <div class="refill-name">${esc(label)}</div>
             <div class="refill-due ${dueClass}">${dueLabel}</div>
           </div>
-          <button class="refill-btn ${st.cls}" onclick="advanceRefillStatus('${med.id}')">${st.text}</button>
+          <button class="refill-btn ${st.cls}" onclick="advanceRefillStatus('${item.id}')">${st.text}</button>
         </div>`;
     }).join('');
   }
@@ -582,9 +973,10 @@
 
   // ── Init ──────────────────────────────────────────────────────────────────────
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
-  loadRefillDates(); // seed localStorage on first run
+  loadMedList(); // seed localStorage + migrate any legacy refill data on first run
   renderNotices();
   render(loadState());
+  renderMedList();
 </script>
 </body>
 </html>
