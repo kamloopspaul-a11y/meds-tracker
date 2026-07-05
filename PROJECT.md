@@ -9,7 +9,7 @@ A Progressive Web App for tracking daily medications and prescription renewal da
 **Apps Script URL:** https://script.google.com/macros/s/AKfycbxcLD26lSIIWg1mG7WfpZOS8kdAKGpOjBnaBOLFphM0vEDzP3S7dRXSDO4GpeJCRXGNhQ/exec
 
 ## Current Version
-v3.1 — deployed July 4, 2026
+v3.2 — deployed July 4, 2026
 
 ## Stack
 - `index.html` — single-file PWA (HTML + CSS + JS)

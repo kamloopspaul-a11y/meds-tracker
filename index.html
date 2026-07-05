@@ -452,7 +452,7 @@
   <div class="modal-box" id="modalBox"></div>
 </div>
 
-<footer>Meds v3.1</footer>
+<footer>Meds v3.2</footer>
 
 <script>
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyJnG-4pevm-343Cw9Vi-lIgNwtnDrcPEG2Icl0HFG5QSAB0DTC2ooZKmCEUdlmuEp4Bw/exec';
@@ -479,7 +479,7 @@
   // through the in-app modal — DEFAULT_* below only seeds localStorage on first run.
   const DEFAULT_PATIENT = {
     name: 'Paul',
-    dob: 'DOB-REDACTED',
+    dob: '', // deliberately blank in public source — set once via "Edit Patient Info," saved to this device's localStorage only, never committed here
     conditions: ['Hyperthyroidism', 'COPD', 'Asthma (mild)'],
     allergies: 'No known drug allergies (NKDA)'
   };

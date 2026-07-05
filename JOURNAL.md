@@ -332,3 +332,19 @@ Same PAT used for Golf also covers this repo — Resource owner: personal accoun
 **Next:** Push this fix; no Apps Script changes involved this time, so no redeploy needed — just the usual GitHub Pages update.
 
 ---
+
+## 2026-07-04 (cont'd) — Real DOB was hardcoded in public source; blanked + scrubbed from history
+
+**Found:** Paul asked "where does DOB live, exactly" — surfaced that `DEFAULT_PATIENT.dob` in `index.html` was hardcoded to Paul's real birthdate (`DOB-REDACTED`) as the localStorage seed value. This predates the backup/restore privacy work and was missed until now: the value was sitting in plaintext in the **public** meds-tracker repo, readable via page source or the repo's commit history, since the commit that introduced the Medication List feature earlier today (`5cc2850`).
+
+**Fix:**
+- `index.html`: `DEFAULT_PATIENT.dob` changed to `''` — a fresh install now starts with a blank DOB, set once by the user via "Edit Patient Info" (writes to localStorage only, never to source).
+- `formatDOB()` already handled an empty value gracefully (renders `—`), no further change needed there.
+- Bumped v3.1 → v3.2, sw.js cache meds-v3-1 → meds-v3-2.
+- **Scrubbed git history:** installed `git-filter-repo`, ran a text replacement across all commits removing the literal string `DOB-REDACTED` from every historical blob (not just the latest commit), then force-pushed the rewritten history to `origin/main`. This closes the exposure completely — the birthdate is no longer recoverable from the repo at any commit, not just the current tip.
+
+**Note for future sessions:** commit hashes for this repo changed as a result of the history rewrite (filter-repo rewrites every commit after the affected one). Anyone with an old local clone (there shouldn't be any besides Paul's Mac and this sandbox) would need to re-clone or hard-reset to the new history rather than pull.
+
+**Lesson:** the original Red Circle Meds build (this same day, before Paul's privacy concerns were raised) seeded real patient data — including DOB — directly into public source as "realistic" defaults. Going forward, any seed/default data for a public repo should be placeholder-only; real personal data belongs only in runtime storage (localStorage) or a private backing store, never committed.
+
+---
