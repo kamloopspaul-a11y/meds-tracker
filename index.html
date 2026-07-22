@@ -452,7 +452,7 @@
   <div class="modal-box" id="modalBox"></div>
 </div>
 
-<footer>Meds v3.2</footer>
+<footer>Meds v3.3</footer>
 
 <script>
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyJnG-4pevm-343Cw9Vi-lIgNwtnDrcPEG2Icl0HFG5QSAB0DTC2ooZKmCEUdlmuEp4Bw/exec';
@@ -789,9 +789,17 @@
 
     if (item.refill.status === 'renew') {
       item.refill.status = 'ordered';
+      // Ordering stops the nagging (see renderNotices) — a filled refill
+      // waiting in a drawer doesn't go stale, so there's nothing left to nag about.
     } else if (item.refill.status === 'ordered') {
+      // "Started New One": only fires once you actually crack the seal, not
+      // when you picked up the order. Anchored to *today*, not the old
+      // scheduled date — devices routinely outlast the nominal daysSupply
+      // (e.g. a 30-day inhaler lasting 35-36 real days), so basing the next
+      // countdown on the stale schedule would compound that drift cycle
+      // after cycle. Today is the only date we actually know is accurate.
       item.refill.status = 'filled';
-      item.refill.nextRefill = addDays(item.refill.nextRefill, item.refill.daysSupply);
+      item.refill.nextRefill = addDays(todayStr(), item.refill.daysSupply);
     } else {
       return; // 'filled' is dimmed/inert — only the date threshold advances it
     }
@@ -808,6 +816,13 @@
 
     list.forEach(item => {
       const r = item.refill;
+
+      // Once it's ordered, every date-driven nag stops — ordering ahead is
+      // the whole point (a filled refill doesn't go stale sitting in a
+      // drawer), so there's nothing left to remind you to do until you
+      // actually start the new one (see "Started New One" in advanceRefillStatus).
+      if (r.status === 'ordered') return;
+
       const label = r.label || item.name;
       const days = daysUntil(r.nextRefill);
 
@@ -840,9 +855,9 @@
 
   // ── Refill list ───────────────────────────────────────────────────────────────
   const REFILL_STATUS_LABELS = {
-    filled:  { text: 'Filled',     cls: 'state-filled'  },
-    renew:   { text: 'Renew Meds', cls: 'state-renew'   },
-    ordered: { text: 'Ordered',    cls: 'state-ordered' }
+    filled:  { text: 'Filled',          cls: 'state-filled'  },
+    renew:   { text: 'Renew Meds',      cls: 'state-renew'   },
+    ordered: { text: 'Started New One', cls: 'state-ordered' }
   };
 
   function renderRefillList() {
